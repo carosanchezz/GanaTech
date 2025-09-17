@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'agregar_animal_page.dart';
+import '1_Inicio.dart'; // asegúrate que aquí está MenuPage
 
 void main() {
-  runApp(const MyApp());
+  runApp(const GestionGanaderaApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GestionGanaderaApp extends StatelessWidget {
+  const GestionGanaderaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +14,10 @@ class MyApp extends StatelessWidget {
       title: 'Gestión Ganadera',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
-        ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const AgregarAnimalPage(),
+      // Pantalla inicial
+      home: const MenuPage(), // cambiamos HomePage por MenuPage
     );
   }
 }

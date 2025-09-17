@@ -10,7 +10,6 @@ class AgregarAnimalPage extends StatefulWidget {
 class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores de texto
   final TextEditingController _caravanaController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
 
@@ -20,7 +19,6 @@ class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
   String? _estadoReproductivoSeleccionado;
   String? _estadoProductivoSeleccionado;
 
-  // Opciones temporales (se pueden modificar más adelante)
   final List<String> _sexos = ['Macho', 'Hembra'];
   final List<String> _estadosReproductivos = [
     'Seleccione',
@@ -39,8 +37,14 @@ class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agregar Animal'),
+        title: const Text(
+          'Agregar Animal',
+          style: TextStyle(color: Colors.white), // 👈 título blanco
+        ),
         backgroundColor: Colors.green[700],
+        iconTheme: const IconThemeData(
+          color: Colors.white, // 👈 flecha blanca
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,9 +55,7 @@ class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
               // Campo Caravana
               TextFormField(
                 controller: _caravanaController,
-                decoration: const InputDecoration(
-                  labelText: 'Caravana *',
-                ),
+                decoration: const InputDecoration(labelText: 'Caravana *'),
                 validator: (value) {
                   if (!_sinCaravana && (value == null || value.isEmpty)) {
                     return 'Ingrese un número de caravana';
@@ -77,79 +79,58 @@ class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
                   const Text("Sin caravana asignada"),
                 ],
               ),
+
               // Campo Peso
               TextFormField(
                 controller: _pesoController,
-                decoration: const InputDecoration(
-                  labelText: 'Peso *',
-                ),
+                decoration: const InputDecoration(labelText: 'Peso *'),
                 keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Ingrese el peso del animal';
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Ingrese el peso' : null,
               ),
               const SizedBox(height: 16),
 
-              // Dropdown Sexo
+              // Dropdowns
               DropdownButtonFormField<String>(
                 value: _sexoSeleccionado,
                 decoration: const InputDecoration(labelText: 'Sexo'),
-                items: _sexos.map((sexo) {
-                  return DropdownMenuItem(
-                    value: sexo,
-                    child: Text(sexo),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _sexoSeleccionado = value;
-                  });
-                },
+                items: _sexos
+                    .map((sexo) =>
+                        DropdownMenuItem(value: sexo, child: Text(sexo)))
+                    .toList(),
+                onChanged: (value) => setState(() => _sexoSeleccionado = value),
                 validator: (value) =>
                     value == null ? 'Seleccione el sexo' : null,
               ),
               const SizedBox(height: 16),
 
-              // Dropdown Estado Reproductivo
               DropdownButtonFormField<String>(
                 value: _estadoReproductivoSeleccionado,
-                decoration: const InputDecoration(labelText: 'Estado reproductivo'),
-                items: _estadosReproductivos.map((estado) {
-                  return DropdownMenuItem(
-                    value: estado,
-                    child: Text(estado),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _estadoReproductivoSeleccionado = value;
-                  });
-                },
+                decoration:
+                    const InputDecoration(labelText: 'Estado reproductivo'),
+                items: _estadosReproductivos
+                    .map((estado) =>
+                        DropdownMenuItem(value: estado, child: Text(estado)))
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _estadoReproductivoSeleccionado = value),
               ),
               const SizedBox(height: 16),
 
-              // Dropdown Estado Productivo
               DropdownButtonFormField<String>(
                 value: _estadoProductivoSeleccionado,
-                decoration: const InputDecoration(labelText: 'Estado productivo'),
-                items: _estadosProductivos.map((estado) {
-                  return DropdownMenuItem(
-                    value: estado,
-                    child: Text(estado),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _estadoProductivoSeleccionado = value;
-                  });
-                },
+                decoration:
+                    const InputDecoration(labelText: 'Estado productivo'),
+                items: _estadosProductivos
+                    .map((estado) =>
+                        DropdownMenuItem(value: estado, child: Text(estado)))
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _estadoProductivoSeleccionado = value),
               ),
               const SizedBox(height: 32),
 
-              // Botón Guardar (por ahora sin conexión)
+              // Botón Guardar
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[700],
@@ -157,16 +138,22 @@ class _AgregarAnimalPageState extends State<AgregarAnimalPage> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // 🚧 Aquí después se conecta con Django + PostgreSQL 🚧
+                    // 🚧 Aquí después se conecta con la base de datos 🚧
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Animal listo para guardar (aún sin conexión a DB)')),
+                          content:
+                              Text('Animal listo para guardar (sin DB aún)')),
                     );
+
+                    Navigator.pop(context); // volvemos a AnimalesScreen
                   }
                 },
                 child: const Text(
                   'Guardar',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white, // 👈 texto blanco del botón
+                  ),
                 ),
               ),
             ],
