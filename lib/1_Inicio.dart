@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'animales_page.dart'; // importamos la pantalla de animales
+import 'animales_page.dart';
+import 'ingresos_gastos_page.dart'; //Importamos Económico
+import 'sanidad_reproduccion_page.dart'; //Importamos Sanidad y Reproduccion
+import 'reportes_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -18,7 +21,7 @@ class _MenuPageState extends State<MenuPage> {
       appBar: AppBar(
         title: const Text(
           "Gestión Ganadera",
-          style: TextStyle(color: Colors.white), // 👈 acá el color blanco
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green[700],
         centerTitle: true,
@@ -45,21 +48,36 @@ class _MenuPageState extends State<MenuPage> {
               index: 1,
               icon: Icons.vaccines,
               label: "Sanidad",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => SanidadScreen()),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _buildMenuButton(
               index: 2,
               icon: Icons.attach_money,
               label: "Económico",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EconomicoScreen()),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _buildMenuButton(
               index: 3,
               icon: Icons.bar_chart,
               label: "Reportes",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReportesPage()),
+                );
+              },
             ),
           ],
         ),

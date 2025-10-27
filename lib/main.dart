@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '1_Inicio.dart'; // asegúrate que aquí está MenuPage
+import 'ingresos_gastos_page.dart';
 
 void main() {
   runApp(const GestionGanaderaApp());

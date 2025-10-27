@@ -1,14 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AnimalDetailScreen extends StatelessWidget {
-  const AnimalDetailScreen({super.key});
+class AnimalDetailScreen extends StatefulWidget {
+  final Map<String, dynamic> animal;
+
+  const AnimalDetailScreen({super.key, required this.animal});
+
+  @override
+  State<AnimalDetailScreen> createState() => _AnimalDetailScreenState();
+}
+
+class _AnimalDetailScreenState extends State<AnimalDetailScreen> {
+  List<dynamic> tratamientos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTratamientos();
+  }
+
+  Future<void> fetchTratamientos() async {
+    try {
+      final url = Uri.parse("http://192.168.224.1:8000/api/tratamientos/");
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          tratamientos = data
+              .where((t) => t['animal'] == widget.animal['id'])
+              .toList();
+        });
+      }
+    } catch (e) {
+      print("Error al obtener tratamientos: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Detalle del Animal"),
+        title: const Text(
+          "Detalle del Animal",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green[700],
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -22,7 +60,7 @@ class AnimalDetailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Identificación con logo de vaca
+                // Identificación
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -35,19 +73,20 @@ class AnimalDetailScreen extends StatelessWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Identificación",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Text("ID Caravana: H1025a"),
-                          Text("Sexo: Hembra"),
-                          Text("Raza: Hereford"),
-                          Text("Fecha nacimiento: 15/03/2021"),
+                          const SizedBox(height: 8),
+                          Text("Caravana: ${widget.animal["caravana"] ?? "Sin dato"}"),
+                          Text("Sexo: ${widget.animal["sexo"] ?? "-"}"),
+                          Text("Peso: ${widget.animal["peso"] ?? "-"} kg"),
+                          Text("Estado reproductivo: ${widget.animal["estado_reproductivo"] ?? "-"}"),
+                          Text("Estado productivo: ${widget.animal["estado_productivo"] ?? "-"}"),
                         ],
                       ),
                     ),
@@ -57,48 +96,28 @@ class AnimalDetailScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 24),
 
-                // Historial Sanitario y Reproducción
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Historial Sanitario",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text("10/03/2024 - Carbunclo"),
-                          Text("20/09/2023 - Aftosa"),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Reproducción",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text("Último parto: 03/08/2022"),
-                          Text("Estado: Seca"),
-                        ],
-                      ),
-                    ),
-                  ],
+                // Historial Sanitario
+                const Text(
+                  "Historial Sanitario",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+
+                // Tratamientos activos
+                if (tratamientos.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const Text(
+                    "🩺 En tratamiento:",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.green),
+                  ),
+                  for (var t in tratamientos)
+                    Text("${t['fecha']} - ${t['condicion']}"),
+                ],
+
                 const SizedBox(height: 24),
 
                 // Movimientos
@@ -114,31 +133,23 @@ class AnimalDetailScreen extends StatelessWidget {
                     DataColumn(label: Text("Origen")),
                     DataColumn(label: Text("Destino")),
                   ],
-                  rows: const [
-                    DataRow(
-                      cells: [
-                        DataCell(Text("28/02/2024")),
-                        DataCell(Text("Salida")),
-                        DataCell(Text("Venta")),
-                        DataCell(Text("Venta")),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        DataCell(Text("17/07/2023")),
-                        DataCell(Text("Ingreso")),
-                        DataCell(Text("Compra")),
-                        DataCell(Text("Compra")),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        DataCell(Text("02/04/2023")),
-                        DataCell(Text("Ingreso")),
-                        DataCell(Text("Nacimiento")),
-                        DataCell(Text("—")),
-                      ],
-                    ),
+                  rows: [
+                    if (widget.animal['salida'] != null)
+                      DataRow(cells: [
+                        DataCell(Text(widget.animal['salida'])),
+                        const DataCell(Text("Salida")),
+                        const DataCell(Text("Venta")),
+                        const DataCell(Text("Destino")),
+                      ]),
+                    DataRow(cells: [
+                      DataCell(Text(widget.animal['fecha_registro']
+                              ?.toString()
+                              .substring(0, 10) ??
+                          "")),
+                      const DataCell(Text("Ingreso")),
+                      const DataCell(Text("Compra")),
+                      const DataCell(Text("Origen")),
+                    ]),
                   ],
                 ),
               ],

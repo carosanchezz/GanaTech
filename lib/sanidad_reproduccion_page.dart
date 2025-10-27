@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'AnimalDetalle_page.dart';
 import 'agregar_animal_page.dart';
+import 'Registros_tactos_tratamientos.dart';
 
-class AnimalesScreen extends StatefulWidget {
+class SanidadScreen extends StatefulWidget {
   @override
-  _AnimalesScreenState createState() => _AnimalesScreenState();
+  SanidadScreenState createState() => SanidadScreenState();
 }
 
-class _AnimalesScreenState extends State<AnimalesScreen> {
+class SanidadScreenState extends State<SanidadScreen> {
   List<Map<String, dynamic>> animales = [];
   String searchQuery = "";
 
@@ -51,7 +52,10 @@ class _AnimalesScreenState extends State<AnimalesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Animales", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Sanidad y Reproducción",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green[700],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -95,7 +99,9 @@ class _AnimalesScreenState extends State<AnimalesScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AnimalDetailScreen(animal: animal),
+                        builder:
+                            (_) =>
+                                RegistrosTactosTratamientosPage(animal: animal),
                       ),
                     );
                   },
